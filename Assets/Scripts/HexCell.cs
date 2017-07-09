@@ -18,6 +18,7 @@ public class HexCell : MonoBehaviour
     public float InnerDiameter { get { return InnerRadius * 2; } }
 
     private HexMap map;
+    private ClickableMesh clickable;
 
     public void PunchYPosition()
     {
@@ -29,9 +30,16 @@ public class HexCell : MonoBehaviour
         iTween.PunchPosition(gameObject, Vector3.down * scale, time);
     }
 
-    private void OnMouseDown()
+    void Awake()
     {
-        PunchYPosition();
+        map = GetComponentInParent<HexMap>();
+        clickable = GetComponentInChildren<ClickableMesh>();
+    }
+
+    void Update()
+    {
+        if (clickable.Clicked)
+            PunchYPosition();
     }
 
     private void OnDrawGizmos()
