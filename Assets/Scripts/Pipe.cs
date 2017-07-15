@@ -5,10 +5,8 @@ using UnityEngine;
 public class Pipe : MonoBehaviour
 {
     public AxialCoordinate Origin;
-    public AxialCoordinate Direction = AxialCoordinate.UpRight;
-    public float Length;
-
-    public AxialCoordinate End { get { return Origin + (Direction * (int)Length); } }
+    public AxialCoordinate End;
+    public AxialCoordinate Direction { get { return End - Origin; } }
 
     private HexMap map;
 
@@ -26,6 +24,6 @@ public class Pipe : MonoBehaviour
 
         transform.position = mid;
         transform.LookAt(endPosition);
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, (Length * map[Origin].InnerDiameter) / 2);
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, (map[Origin].HexMesh.InnerDiameter) / 2);
 	}
 }
