@@ -12,14 +12,12 @@ public class HexCell : MonoBehaviour
     public AxialCoordinate Coordinate;
     public IEnumerable<HexCell> Neighbours { get { return AxialCoordinate.Directions.Select(d => map[Coordinate + d]); } }
     public HexMesh HexMesh { get { return GetComponentInChildren<HexMesh>(); } }
+    public Vector3 Position { get { return transform.position; } }
 
     private HexMap map;
-    private ClickableMesh clickable;
-    private bool highlight;
 
-    // Nodes
-    // Pipes
-    // Controller
+    public Node Node { get; private set; }
+    public List<Pipe> Pipes { get; private set; }
 
     public void PunchYPosition()
     {
@@ -31,37 +29,66 @@ public class HexCell : MonoBehaviour
         iTween.PunchPosition(gameObject, Vector3.down * scale, time);
     }
 
+    public bool Add(Pipe pipe)
+    {
+        bool added = false;
+
+        // Don't add if already contains
+        if (!Contains(pipe))
+        {
+            Pipes.Add(pipe);
+            added = true;
+        }
+
+        return added;
+    }
+
+    public bool Add(Node node)
+    {
+        bool added = false;
+
+        // Don't add node if already has one
+        if (!HasNode())
+        {
+            Node = node;
+            added = true;
+        }
+
+        return added;
+    }
+
     public bool IsAdjacent(HexCell other)
     {
         return Coordinate.Adjacent(other.Coordinate);
     }
 
-    public void Highlight(bool active)
+    public bool Contains(Pipe pipe)
     {
-        highlight = active;
+        return Pipes.Contains(pipe);
     }
 
-    void Awake()
+    public bool Contains(Node node)
+    {
+        return Node == node;
+    }
+
+    public bool HasNode()
+    {
+        return Node != null;
+    }
+
+    public bool HasPipeTo(HexCell other)
+    {
+        return Pipes.Where(p => p.Cells.Contains(other) && p.Cells.Contains(this)).Any();
+    }
+
+    private void Awake()
     {
         map = GetComponentInParent<HexMap>();
-        clickable = GetComponentInChildren<ClickableMesh>();
-    }
-
-    void Update()
-    {
-        if (clickable.Clicked)
-            PunchYPosition();
     }
 
     private void OnDrawGizmos()
     {
-        if (highlight)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireMesh(HexMesh.SharedMesh, 0, transform.GetChild(0).position);
-            Gizmos.color = Color.white;
-        }
-
         Handles.color = Color.red;
         Handles.Label(transform.position, Coordinate.ToString());
     }
