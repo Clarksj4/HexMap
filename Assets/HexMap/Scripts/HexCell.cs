@@ -57,6 +57,19 @@ public class HexCell : MonoBehaviour
         return added;
     }
 
+    public bool Remove(Node node)
+    {
+        bool removed = false;
+
+        if (Node == node)
+        {
+            Node = null;
+            removed = true;
+        }
+
+        return removed;
+    }
+
     public bool IsAdjacent(HexCell other)
     {
         return Coordinate.Adjacent(other.Coordinate);

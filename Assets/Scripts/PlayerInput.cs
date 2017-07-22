@@ -54,12 +54,6 @@ public class PlayerInput : MonoBehaviour
         SetState(BuildState.None);
     }
 
-    private void Update ()
-    {
-        previousCell = currentCell;
-        currentCell = GetCellUnderCursor();
-	}
-
     private HexCell GetCellUnderCursor()
     {
         HexCell cell = null;
@@ -100,6 +94,9 @@ public class PlayerInput : MonoBehaviour
 
         while (true)
         {
+            previousCell = currentCell;
+            currentCell = GetCellUnderCursor();
+
             // If a new cell is moused over
             if (previousCell != currentCell)
             {
@@ -139,19 +136,35 @@ public class PlayerInput : MonoBehaviour
         // Check for clicks
 
         template = Instantiate(NodePrefab).gameObject;
+        Node templateNode = template.GetComponent<Node>();
+        template.SetActive(false);
 
         bool validPlacement = false;
+        int rotationIncrement = 0;
 
         while (true)
         {
-            if (previousCell != null && currentCell != null)
+            // Get ref to cell the cursor is currently over as well as the previous one
+            previousCell = currentCell;
+            currentCell = GetCellUnderCursor();
+
+            if (Input.GetKeyDown(KeyCode.Q))
+                rotationIncrement = MathExtension.Wrap(rotationIncrement - 1, 0, AxialCoordinate.Directions.Length);
+            else if(Input.GetKeyDown(KeyCode.E))
+                rotationIncrement = MathExtension.Wrap(rotationIncrement + 1, 0, AxialCoordinate.Directions.Length);
+
+            templateNode.Direction = AxialCoordinate.Directions[rotationIncrement];
+
+            // If there is a cell bing targeted
+            if (currentCell != null)
             {
+                template.SetActive(true);
+
                 // If a new cell is moused over
                 if (previousCell != currentCell)
                 {
                     // Move template to new position
-                    Node templateNode = template.GetComponent<Node>();
-                    templateNode.OnAndTowards(currentCell, previousCell);
+                    templateNode.At(currentCell);
 
                     // Check if new cell is a valid place to build pipe
                     validPlacement = templateNode.IsValidPlacement(currentCell);
@@ -163,7 +176,7 @@ public class PlayerInput : MonoBehaviour
                     // Is node placement valid?
                     if (validPlacement)
                     {
-                        NodePrefab.OnAndTowards(currentCell, previousCell).Create();
+                        NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                         SetState(BuildState.None);
                     }
 
