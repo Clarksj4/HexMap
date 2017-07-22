@@ -17,16 +17,18 @@ public class HexCell : MonoBehaviour
     private HexMap map;
 
     public Node Node { get; private set; }
-    public List<Pipe> Pipes { get; private set; }
-
-    public void PunchYPosition()
-    {
-        PunchYPosition(DEFAULT_PUNCH_Y_SCALE, DEFAULT_PUNCH_Y_TIME);
-    }
+    public Pipe Pipe { get; private set; }
+    public bool HasNode { get { return Node != null; } }
+    public bool HasPipe { get { return Pipe != null; } }
 
     public void PunchYPosition(float scale, float time)
     {
         iTween.PunchPosition(gameObject, Vector3.down * scale, time);
+    }
+
+    public void Quake(float dY, float time)
+    {
+        iTween.PunchPosition(gameObject, Vector3.down * dY, time);
     }
 
     public bool Add(Pipe pipe)
@@ -34,9 +36,9 @@ public class HexCell : MonoBehaviour
         bool added = false;
 
         // Don't add if already contains
-        if (!Contains(pipe))
+        if (!HasPipe)
         {
-            Pipes.Add(pipe);
+            Pipe = pipe;
             added = true;
         }
 
@@ -48,7 +50,7 @@ public class HexCell : MonoBehaviour
         bool added = false;
 
         // Don't add node if already has one
-        if (!HasNode())
+        if (!HasNode)
         {
             Node = node;
             added = true;
@@ -72,28 +74,13 @@ public class HexCell : MonoBehaviour
 
     public bool IsAdjacent(HexCell other)
     {
-        return Coordinate.Adjacent(other.Coordinate);
+        return Coordinate.IsAdjacent(other.Coordinate);
     }
 
-    public bool Contains(Pipe pipe)
-    {
-        return Pipes.Contains(pipe);
-    }
-
-    public bool Contains(Node node)
-    {
-        return Node == node;
-    }
-
-    public bool HasNode()
-    {
-        return Node != null;
-    }
-
-    public bool HasPipeTo(HexCell other)
-    {
-        return Pipes.Where(p => p.Cells.Contains(other) && p.Cells.Contains(this)).Any();
-    }
+    //public bool HasPipeTo(HexCell other)
+    //{
+    //    return Pipe.Where(p => p.Cells.Contains(other) && p.Cells.Contains(this)).Any();
+    //}
 
     private void Awake()
     {

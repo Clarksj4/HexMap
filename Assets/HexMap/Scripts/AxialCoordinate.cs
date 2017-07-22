@@ -31,6 +31,27 @@ public struct AxialCoordinate
     /// </summary>
     public int GridColumn { get { return x + z / 2; } }
 
+    /// <summary>
+    /// Converts this direction coordinate to a vector
+    /// </summary>
+    public Vector3 Vector { get { return Rotation * Vector3.forward; } }
+
+    /// <summary>
+    /// Converts this direction coordinate to a rotation about the y-axis
+    /// </summary>
+    public Quaternion Rotation
+    {
+        get
+        {
+            // Copy coordinate so can use in lambda expression
+            AxialCoordinate copy = new AxialCoordinate(x, z);
+
+            // Calculate rotation based off of coordinate position in Directions array
+            float rotation = 30 + Directions.TakeWhile(d => d != copy).Sum(d => 60f);
+            return Quaternion.Euler(0, rotation, 0);
+        }
+    }
+
     [SerializeField]
     private int x;
     [SerializeField]
@@ -42,7 +63,7 @@ public struct AxialCoordinate
         this.z = y;
     }
 
-    public bool Adjacent(AxialCoordinate other)
+    public bool IsAdjacent(AxialCoordinate other)
     {
         return Directions.Select(d => other + d).Contains(this);
     }

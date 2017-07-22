@@ -14,11 +14,14 @@ public class PlayerInput : MonoBehaviour
     public Node NodePrefab;
     public Material correctPlacement;
     public Material incorrectPlacement;
+    public AudioClip snapToSound;
+    public AudioClip rotateSound;
 
     private HexCell currentCell;
     private HexCell previousCell;
     private BuildState state;
-    private GameObject template;
+
+    private Node templateNode;
 
     public void SetState(int newState)
     {
@@ -31,7 +34,7 @@ public class PlayerInput : MonoBehaviour
         {
             // Cancel other states, remove template, enter new state
             StopAllCoroutines();
-            Destroy(template);
+            Destroy(templateNode.gameObject);
             state = newState;
 
             switch (state)
@@ -66,15 +69,15 @@ public class PlayerInput : MonoBehaviour
         return cell;
     }
 
-    private void HighlightTemplate(bool validPlacement)
+    private void HighlightTemplate(GameObject template, bool validPlacement)
     {
         if (validPlacement)
-            HighlightTemplate(correctPlacement);
+            HighlightTemplate(template, correctPlacement);
         else
-            HighlightTemplate(incorrectPlacement);
+            HighlightTemplate(template, incorrectPlacement);
     }
 
-    private void HighlightTemplate(Material newMaterial)
+    private void HighlightTemplate(GameObject template, Material newMaterial)
     {
         // Set all materials for all renderers to given material
         foreach (var renderer in template.GetComponentsInChildren<Renderer>())
@@ -88,7 +91,7 @@ public class PlayerInput : MonoBehaviour
         // Colour it appropriately
         // Check for clicks
 
-        template = Instantiate(PipePrefab).gameObject;
+        //template = Instantiate(PipePrefab).gameObject;
 
         bool validPlacement = false;
 
@@ -101,20 +104,20 @@ public class PlayerInput : MonoBehaviour
             if (previousCell != currentCell)
             {
                 // Move template to new position
-                Pipe templatePipe = template.GetComponent<Pipe>();
-                templatePipe.Between(previousCell, currentCell);
+                //Pipe templatePipe = template.GetComponent<Pipe>();
+                //templatePipe.Between(previousCell, currentCell);
 
                 // Check if new cell is a valid place to build pipe
-                validPlacement = templatePipe.IsValidPlacement(previousCell, currentCell);
-                HighlightTemplate(validPlacement);
+                //validPlacement = templatePipe.IsValidPlacement(previousCell, currentCell);
+                //HighlightTemplate(validPlacement);
             }
 
             // If left mouse button is clicked
             if (Input.GetMouseButtonDown(0))
             {
                 // Is pipe placement valid?
-                if (validPlacement)
-                    PipePrefab.Between(previousCell, currentCell).Create();
+                if (validPlacement) { }
+                //PipePrefab.Between(previousCell, currentCell).Create();
 
                 else
                 {
@@ -135,36 +138,40 @@ public class PlayerInput : MonoBehaviour
         // Colour it appropriately
         // Check for clicks
 
-        template = Instantiate(NodePrefab).gameObject;
-        Node templateNode = template.GetComponent<Node>();
-        template.SetActive(false);
+        // Template node showing where the actual node will be built
+        templateNode = Instantiate(NodePrefab);
+        templateNode.Towards(AxialCoordinate.Directions[0]);
+        templateNode.gameObject.SetActive(false);                          // Hide template until it is positioned on a cell
 
         bool validPlacement = false;
         int rotationIncrement = 0;
 
+        // While in BuildNodeState
         while (true)
         {
             // Get ref to cell the cursor is currently over as well as the previous one
             previousCell = currentCell;
             currentCell = GetCellUnderCursor();
-
-            if (Input.GetKeyDown(KeyCode.Q))
-                rotationIncrement = MathExtension.Wrap(rotationIncrement - 1, 0, AxialCoordinate.Directions.Length);
-            else if(Input.GetKeyDown(KeyCode.E))
-                rotationIncrement = MathExtension.Wrap(rotationIncrement + 1, 0, AxialCoordinate.Directions.Length);
-
-            templateNode.Direction = AxialCoordinate.Directions[rotationIncrement];
-
+            
             // If there is a cell bing targeted
             if (currentCell != null)
             {
-                template.SetActive(true);
+                // Show template when its on a cell
+                templateNode.gameObject.SetActive(true);
+
+                // Rotate if Q or E are pressed, play sound
+                rotationIncrement = HandleRotationInput(templateNode, rotationIncrement);
 
                 // If a new cell is moused over
-                if (previousCell != currentCell)
+                if (previousCell != currentCell &&
+                    templateNode.Cell != currentCell)
                 {
                     // Move template to new position
                     templateNode.At(currentCell);
+
+                    AudioSource player = templateNode.GetComponent<AudioSource>();
+                    player.clip = snapToSound;
+                    player.Play();
 
                     // Check if new cell is a valid place to build pipe
                     validPlacement = templateNode.IsValidPlacement(currentCell);
@@ -176,6 +183,7 @@ public class PlayerInput : MonoBehaviour
                     // Is node placement valid?
                     if (validPlacement)
                     {
+                        // Create node at current cell, exit build state
                         NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                         SetState(BuildState.None);
                     }
@@ -191,5 +199,39 @@ public class PlayerInput : MonoBehaviour
             // Repeat next frame
             yield return null;
         }
+    }
+
+    private int HandleRotationInput(Node templateNode, int rotationIncrement)
+    {
+        // Rotate node with Q and E
+        bool rotated = false;
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            rotationIncrement = MathExtension.Wrap(rotationIncrement - 1, 0, AxialCoordinate.Directions.Length);
+            rotated = true;
+
+            AudioSource player = templateNode.GetComponent<AudioSource>();
+            player.clip = rotateSound;
+            player.timeSamples = player.clip.samples - 1;
+            player.pitch = -1;
+            player.Play();
+        }
+
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            rotationIncrement = MathExtension.Wrap(rotationIncrement + 1, 0, AxialCoordinate.Directions.Length);
+            rotated = true;
+
+            AudioSource player = templateNode.GetComponent<AudioSource>();
+            player.clip = rotateSound;
+            player.timeSamples = 0;
+            player.pitch = 1;
+            player.Play();
+        }
+
+        if (rotated)
+            templateNode.Direction = AxialCoordinate.Directions[rotationIncrement];
+
+        return rotationIncrement;
     }
 }

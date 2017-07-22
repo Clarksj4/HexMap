@@ -1,61 +1,71 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Pipe : MonoBehaviour
 {
-    public AxialCoordinate Origin;
-    public AxialCoordinate End;
+    public AxialCoordinate Coordinate
+    {
+        get { return coordinate; }
+        set
+        {
+            coordinate = value;
+            cell = map[coordinate];
 
-    public HexCell[] Cells { get { return cells; } }
+            transform.position = cell.Position;
+        }
+    }
 
-    private HexMap map;
+    public AxialCoordinate[] Directions { get { return directions; } }
+
+    public Vector3 Position { get { return transform.position; } }
+
+    public GameObject Section;
+
+    [SerializeField]
+    private AxialCoordinate coordinate;
+    [SerializeField]
+    private AxialCoordinate[] directions;
     [SerializeField][HideInInspector]
-    private HexCell[] cells;
+    private HexCell cell;
+    [SerializeField][HideInInspector]
+    private HexMap map;
 
     private void Awake()
     {
         map = FindObjectOfType<HexMap>();
     }
 
-    public Pipe Between(HexCell origin, HexCell end)
+    public GameObject AddSection(AxialCoordinate direction)
     {
-        Origin = origin.Coordinate;
-        End = end.Coordinate;
+        if (directions.Contains(direction))
+            throw new ArgumentException("Pipe already extends in the given direction");
 
-        cells = new HexCell[] { origin, end };
-        foreach (var cell in cells)
-            cell.Add(this);
+        GameObject section = Instantiate(Section);
 
-        Vector3 originPosition = cells[0].Position;
-        Vector3 endPosition = cells[1].Position;
-        Vector3 mid = originPosition + ((endPosition - originPosition) * 0.5f);
+        // Size
+        Vector3 scale = new Vector3(section.transform.localScale.x, section.transform.localScale.y, cell.HexMesh.InnerRadius);
+        section.transform.localScale = scale;
 
-        transform.position = mid;
-        transform.LookAt(endPosition);
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, (cells[0].HexMesh.InnerDiameter) / 2);
+        // Orientation
+        section.transform.LookAt(direction);
 
-        return this;
+        // Position
+        section.transform.position = cell.Position + (direction.Vector * (cell.HexMesh.InnerRadius / 2));
+
+        return section;
     }
 
-    public Pipe Create()
+    public bool IsValidExtension(HexCell origin, AxialCoordinate direction)
     {
-        // Create a new pipe with same settings as this one
-        Pipe newPipe = Instantiate(this);
+        HexCell end = map[origin.Coordinate + direction];
 
-        // Give the cells it's on a ref to the new pipe
-        foreach (var cell in newPipe.Cells)
-            cell.Add(newPipe);
-
-        return newPipe;
-    }
-
-    public bool IsValidPlacement(HexCell origin, HexCell end)
-    {
         return origin != null &&
                end != null &&
                origin != end &&
                origin.IsAdjacent(end) &&
-               !origin.HasPipeTo(end);
+               !directions.Contains(direction);
     }
 }

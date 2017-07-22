@@ -38,8 +38,7 @@ public class Node : MonoBehaviour
             direction = value;
 
             // Set rotation
-            float rotation = 30 + AxialCoordinate.Directions.TakeWhile(d => d != Direction).Sum(d => 60f);
-            transform.rotation = Quaternion.Euler(0, rotation, 0);
+            transform.LookAt(direction);
         }
     }
 
@@ -61,7 +60,7 @@ public class Node : MonoBehaviour
     public bool IsValidPlacement(HexCell cell)
     {
         return cell != null &&
-               !cell.HasNode();
+               !cell.HasNode;
     }
 
     //
