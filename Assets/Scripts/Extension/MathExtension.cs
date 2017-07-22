@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UnityEngine
 {
-    public static class MathExtension
+    public static class Maths
     {
         public static int Wrap(int number, int min, int max)
         {
@@ -15,6 +15,11 @@ namespace UnityEngine
                 number = max + (number - min);
 
             return number;
+        }
+
+        public static int Sign(bool positive)
+        {
+            return positive ? 1 : -1;
         }
     }
 }

@@ -5,23 +5,23 @@ using UnityEngine;
 [Serializable]
 public struct AxialCoordinate
 {
-    public static AxialCoordinate Zero = new AxialCoordinate(0, 0);
-    public static AxialCoordinate UpRight = new AxialCoordinate(0, 1);
-    public static AxialCoordinate Right = new AxialCoordinate(1, 0);
+    public static AxialCoordinate Zero      = new AxialCoordinate(0, 0);
+    public static AxialCoordinate UpRight   = new AxialCoordinate(0, 1);
+    public static AxialCoordinate Right     = new AxialCoordinate(1, 0);
     public static AxialCoordinate DownRight = new AxialCoordinate(1, -1);
-    public static AxialCoordinate DownLeft = new AxialCoordinate(0, -1);
-    public static AxialCoordinate Left = new AxialCoordinate(-1, 0);
-    public static AxialCoordinate UpLeft = new AxialCoordinate(-1, 1);
+    public static AxialCoordinate DownLeft  = new AxialCoordinate(0, -1);
+    public static AxialCoordinate Left      = new AxialCoordinate(-1, 0);
+    public static AxialCoordinate UpLeft    = new AxialCoordinate(-1, 1);
 
     public static AxialCoordinate[] Directions = new AxialCoordinate[]
-        {
+    {
             UpRight,
             Right,
             DownRight,
             DownLeft,
             Left,
             UpLeft
-        };
+    };
 
     public int X { get { return x; } }
     public int Z { get { return z; } }
@@ -30,27 +30,6 @@ public struct AxialCoordinate
     /// Convert axial coordinate x to a column index in a grid layout.
     /// </summary>
     public int GridColumn { get { return x + z / 2; } }
-
-    /// <summary>
-    /// Converts this direction coordinate to a vector
-    /// </summary>
-    public Vector3 Vector { get { return Rotation * Vector3.forward; } }
-
-    /// <summary>
-    /// Converts this direction coordinate to a rotation about the y-axis
-    /// </summary>
-    public Quaternion Rotation
-    {
-        get
-        {
-            // Copy coordinate so can use in lambda expression
-            AxialCoordinate copy = new AxialCoordinate(x, z);
-
-            // Calculate rotation based off of coordinate position in Directions array
-            float rotation = 30 + Directions.TakeWhile(d => d != copy).Sum(d => 60f);
-            return Quaternion.Euler(0, rotation, 0);
-        }
-    }
 
     [SerializeField]
     private int x;

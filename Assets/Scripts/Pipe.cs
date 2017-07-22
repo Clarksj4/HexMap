@@ -18,16 +18,14 @@ public class Pipe : MonoBehaviour
         }
     }
 
-    public AxialCoordinate[] Directions { get { return directions; } }
-
     public Vector3 Position { get { return transform.position; } }
 
-    public GameObject Section;
+    public GameObject SectionPrefab;
 
     [SerializeField]
     private AxialCoordinate coordinate;
-    [SerializeField]
-    private AxialCoordinate[] directions;
+    [SerializeField][HideInInspector]
+    private GameObject[] sections;
     [SerializeField][HideInInspector]
     private HexCell cell;
     [SerializeField][HideInInspector]
@@ -36,36 +34,46 @@ public class Pipe : MonoBehaviour
     private void Awake()
     {
         map = FindObjectOfType<HexMap>();
+
+        if (sections == null)
+            sections = new GameObject[AxialCoordinate.Directions.Length];
     }
 
-    public GameObject AddSection(AxialCoordinate direction)
+    public GameObject AddSection(HexDirection direction)
     {
-        if (directions.Contains(direction))
-            throw new ArgumentException("Pipe already extends in the given direction");
+        if (sections[(int)direction] == null)
+        {
+            GameObject section = Instantiate(SectionPrefab);
 
-        GameObject section = Instantiate(Section);
+            // Size
+            Vector3 scale = new Vector3(section.transform.localScale.x, section.transform.localScale.y, cell.HexMesh.InnerRadius);
+            section.transform.localScale = scale;
 
-        // Size
-        Vector3 scale = new Vector3(section.transform.localScale.x, section.transform.localScale.y, cell.HexMesh.InnerRadius);
-        section.transform.localScale = scale;
+            // Orientation
+            section.transform.LookAt(direction);
 
-        // Orientation
-        section.transform.LookAt(direction);
+            // Position
+            section.transform.position = cell.Position + (direction.ToVector() * (cell.HexMesh.InnerRadius / 2));
 
-        // Position
-        section.transform.position = cell.Position + (direction.Vector * (cell.HexMesh.InnerRadius / 2));
+            return section;
+        }
 
-        return section;
+        return null;
     }
 
-    public bool IsValidExtension(HexCell origin, AxialCoordinate direction)
+    public bool IsValidExtension(HexCell origin, HexDirection direction)
     {
-        HexCell end = map[origin.Coordinate + direction];
+        HexCell end = map[origin.Coordinate + direction.ToCoordinate()];
 
         return origin != null &&
                end != null &&
                origin != end &&
                origin.IsAdjacent(end) &&
-               !directions.Contains(direction);
+               !HasSectionInDirection(direction);
+    }
+
+    public bool HasSectionInDirection(HexDirection direction)
+    {
+        return sections[(int)direction] != null;
     }
 }

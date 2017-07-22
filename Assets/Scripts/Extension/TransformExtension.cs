@@ -10,10 +10,10 @@ namespace UnityEngine
         /// <summary>
         /// Sets the transforms rotation so it is looking in the given direction
         /// </summary>
-        public static void LookAt(this Transform transform, AxialCoordinate direction)
+        public static void LookAt(this Transform transform, HexDirection direction)
         {
             // Set rotation
-            transform.rotation = direction.Rotation;
+            transform.rotation = direction.ToRotation();
         }
     }
 }
