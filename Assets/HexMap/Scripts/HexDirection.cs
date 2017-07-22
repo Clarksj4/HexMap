@@ -21,7 +21,7 @@ public static class HexDirectionExtension
         return AxialCoordinate.Directions[(int)direction];
     }
 
-    public static Vector3 ToVector(this HexDirection direction)
+    public static Vector3 ToNormalizedVector(this HexDirection direction)
     {
         return direction.ToRotation() * Vector3.forward;
     }

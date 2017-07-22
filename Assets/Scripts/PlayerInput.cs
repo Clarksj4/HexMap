@@ -82,50 +82,25 @@ public class PlayerInput : MonoBehaviour
 
     IEnumerator PlacePipeState()
     {
-        // Instantiate a pipe at cursor position
-        // Check if placement is appropriate
-        // Colour it appropriately
-        // Check for clicks
-
-        //template = Instantiate(PipePrefab).gameObject;
-
-        bool validPlacement = false;
-
         while (true)
         {
             previousCell = currentCell;
             currentCell = GetCellUnderCursor();
 
             // If a new cell is moused over
-            if (previousCell != currentCell)
+            if (currentCell != null)
             {
-                if (currentCell.HasPipe)
+                // If left mouse button is clicked
+                if (Input.GetMouseButtonDown(0))
                 {
-                    // Check if cells are adjacent
-                    // Get direction
-                    // add pipe section
-                }
+                    Pipe pipe = currentCell.Pipe;
+                    if (!pipe)
+                    {
+                        pipe = Instantiate(PipePrefab);
+                        pipe.Coordinate = currentCell.Coordinate;
+                    }
 
-                // Move template to new position
-                //Pipe templatePipe = template.GetComponent<Pipe>();
-                //templatePipe.Between(previousCell, currentCell);
-
-                // Check if new cell is a valid place to build pipe
-                //validPlacement = templatePipe.IsValidPlacement(previousCell, currentCell);
-                //HighlightTemplate(validPlacement);
-            }
-
-            // If left mouse button is clicked
-            if (Input.GetMouseButtonDown(0))
-            {
-                // Is pipe placement valid?
-                if (validPlacement) { }
-                //PipePrefab.Between(previousCell, currentCell).Create();
-
-                else
-                {
-                    // PunchY the template pipe
-                    // Play error sound
+                    pipe.AddSection((HexDirection)Random.Range(0, 6));
                 }
             }
 
@@ -138,11 +113,11 @@ public class PlayerInput : MonoBehaviour
     {
         // Template node highlighting where the actual node will be built
         templateNode = Instantiate(NodePrefab);
-        templateNode.Towards(AxialCoordinate.Directions[0]);
+        templateNode.Towards(0);
         templateNode.gameObject.SetActive(false);               // Hide template until it is positioned on a cell
 
         bool validPlacement = false;
-        int rotationIncrement = 0;
+        HexDirection rotation = 0;
 
         // While in BuildNodeState
         while (state == BuildState.Node)
@@ -158,7 +133,7 @@ public class PlayerInput : MonoBehaviour
                 templateNode.gameObject.SetActive(true);
 
                 // Rotate if Q or E are pressed, play sound
-                rotationIncrement = HandleRotationInput(templateNode, rotationIncrement);
+                rotation = HandleRotationInput(templateNode, rotation);
 
                 // Move if cursor is over a new cell, play sound
                 validPlacement = HandleNodeMovementInput(templateNode, validPlacement);
@@ -214,7 +189,7 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    private int HandleRotationInput(Node templateNode, int rotationIncrement)
+    private HexDirection HandleRotationInput(Node templateNode, HexDirection rotation)
     {
         // Rotate node with Q and E
         bool clockwise = Input.GetKeyDown(KeyCode.E);
@@ -223,16 +198,16 @@ public class PlayerInput : MonoBehaviour
         if (clockwise || antiClockwise)
         {
             // Increment and wrap rotationIncrement
-            rotationIncrement += Maths.Sign(clockwise);
-            rotationIncrement = Maths.Wrap(rotationIncrement, 0, AxialCoordinate.Directions.Length);
-            templateNode.Direction = AxialCoordinate.Directions[rotationIncrement];
+            rotation += Maths.Sign(clockwise);
+            rotation = (HexDirection)Maths.Wrap((int)rotation, 0, AxialCoordinate.Directions.Length);
+            templateNode.Direction = (HexDirection)rotation;
 
             // Play rotation sound
             AudioSource source = templateNode.GetComponent<AudioSource>();
             PlaySound(source, rotateSound, clockwise);
         }
         
-        return rotationIncrement;
+        return rotation;
     }
 
     private void PlaySound(AudioSource source, AudioClip clip, bool forwards = true)

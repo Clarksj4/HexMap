@@ -30,7 +30,7 @@ public class Node : MonoBehaviour
         }
     }
 
-    public AxialCoordinate Direction
+    public HexDirection Direction
     {
         get { return direction; }
         set
@@ -46,7 +46,7 @@ public class Node : MonoBehaviour
     [SerializeField]
     private AxialCoordinate coordinate;
     [SerializeField]
-    private AxialCoordinate direction;
+    private HexDirection direction;
     [SerializeField][HideInInspector]
     private HexCell cell;
     [SerializeField][HideInInspector]
@@ -93,7 +93,7 @@ public class Node : MonoBehaviour
     /// <summary>
     /// Rotates this node so it is facing the given direction
     /// </summary>
-    public Node Towards(AxialCoordinate direction)
+    public Node Towards(HexDirection direction)
     {
         Direction = direction;
         return this;

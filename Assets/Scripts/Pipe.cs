@@ -13,6 +13,7 @@ public class Pipe : MonoBehaviour
         {
             coordinate = value;
             cell = map[coordinate];
+            cell.Add(this);
 
             transform.position = cell.Position;
         }
@@ -20,12 +21,12 @@ public class Pipe : MonoBehaviour
 
     public Vector3 Position { get { return transform.position; } }
 
-    public GameObject SectionPrefab;
+    public PipeSection SectionPrefab;
 
     [SerializeField]
     private AxialCoordinate coordinate;
     [SerializeField][HideInInspector]
-    private GameObject[] sections;
+    private PipeSection[] sections = new PipeSection[AxialCoordinate.Directions.Length];
     [SerializeField][HideInInspector]
     private HexCell cell;
     [SerializeField][HideInInspector]
@@ -34,28 +35,18 @@ public class Pipe : MonoBehaviour
     private void Awake()
     {
         map = FindObjectOfType<HexMap>();
-
-        if (sections == null)
-            sections = new GameObject[AxialCoordinate.Directions.Length];
     }
 
     public GameObject AddSection(HexDirection direction)
     {
         if (sections[(int)direction] == null)
         {
-            GameObject section = Instantiate(SectionPrefab);
+            // Create section and position / orientate on cell
+            PipeSection section = Instantiate(SectionPrefab, transform);
+            section.Set(cell, direction);
+            sections[(int)direction] = section;
 
-            // Size
-            Vector3 scale = new Vector3(section.transform.localScale.x, section.transform.localScale.y, cell.HexMesh.InnerRadius);
-            section.transform.localScale = scale;
-
-            // Orientation
-            section.transform.LookAt(direction);
-
-            // Position
-            section.transform.position = cell.Position + (direction.ToVector() * (cell.HexMesh.InnerRadius / 2));
-
-            return section;
+            return section.gameObject;
         }
 
         return null;
