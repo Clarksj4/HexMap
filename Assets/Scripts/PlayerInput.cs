@@ -188,6 +188,7 @@ public class PlayerInput : MonoBehaviour
                 // Create node at current cell, exit build state
                 NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                 SetState(BuildState.None);
+                currentCell.Quake(1, 3);
             }
 
             else
