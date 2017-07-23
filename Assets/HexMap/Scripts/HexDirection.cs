@@ -36,7 +36,7 @@ public static class HexDirectionExtension
     public static HexDirection Opposite(this HexDirection direction)
     {
         int unwrapped = (int)direction + (AxialCoordinate.Directions.Length / 2);
-        int wrapped = Maths.Wrap(unwrapped, 0, AxialCoordinate.Directions.Length / 2);
+        int wrapped = Maths.Wrap(unwrapped, 0, AxialCoordinate.Directions.Length);
         return (HexDirection)wrapped;
     }
 }

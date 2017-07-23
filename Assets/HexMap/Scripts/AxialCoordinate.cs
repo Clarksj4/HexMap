@@ -47,6 +47,14 @@ public struct AxialCoordinate
         return Directions.Select(d => other + d).Contains(this);
     }
 
+    public HexDirection GetDirection(AxialCoordinate adjacent)
+    {
+        AxialCoordinate directionCoordinate = adjacent - this;
+        int directionIndex = Directions.TakeWhile(d => d != directionCoordinate).Sum(d => 1);
+
+        return (HexDirection)directionIndex;
+    }
+
     /// <summary>
     /// Calculate an axial coordinate from a column and row index in a grid layout. Column and Row
     /// indices are assumed to start at the bottom left of the grid layout

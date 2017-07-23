@@ -88,20 +88,29 @@ public class PlayerInput : MonoBehaviour
             currentCell = GetCellUnderCursor();
 
             // If a new cell is moused over
-            if (currentCell != null)
+            if (currentCell != null && 
+                previousCell != null && 
+                currentCell.IsAdjacent(previousCell) &&
+                Input.GetMouseButton(0))
             {
-                // If left mouse button is clicked
-                if (Input.GetMouseButtonDown(0))
-                {
-                    Pipe pipe = currentCell.Pipe;
-                    if (!pipe)
-                    {
-                        pipe = Instantiate(PipePrefab);
-                        pipe.Coordinate = currentCell.Coordinate;
-                    }
+                Pipe pipe = currentCell.Pipe;
+                Pipe adjacentPipe = previousCell.Pipe;
 
-                    pipe.AddSection((HexDirection)Random.Range(0, 6));
+                if (!pipe)
+                {
+                    pipe = Instantiate(PipePrefab);
+                    pipe.Coordinate = currentCell.Coordinate;
                 }
+
+                if (!adjacentPipe)
+                {
+                    adjacentPipe = Instantiate(PipePrefab);
+                    adjacentPipe.Coordinate = previousCell.Coordinate;
+                }
+
+                HexDirection direction = pipe.Coordinate.GetDirection(adjacentPipe.Coordinate);
+                pipe.AddSection(direction);
+                adjacentPipe.AddSection(direction.Opposite());
             }
 
             // Repeat next frame
