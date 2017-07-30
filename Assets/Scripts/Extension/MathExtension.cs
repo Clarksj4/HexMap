@@ -21,5 +21,10 @@ namespace UnityEngine
         {
             return positive ? 1 : -1;
         }
+
+        public static int Max(params int[] values)
+        {
+            return values.OrderByDescending(v => v).First();
+        }
     }
 }

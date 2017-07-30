@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Pathfinding;
 
 [Serializable]
-public struct AxialCoordinate
+public struct AxialCoordinate : IGraphNode
 {
     public static AxialCoordinate Zero      = new AxialCoordinate(0, 0);
     public static AxialCoordinate UpRight   = new AxialCoordinate(0, 1);
@@ -24,6 +26,7 @@ public struct AxialCoordinate
     };
 
     public int X { get { return x; } }
+    private int Y { get { return -(x + z); } }
     public int Z { get { return z; } }
 
     /// <summary>
@@ -53,6 +56,26 @@ public struct AxialCoordinate
         int directionIndex = Directions.TakeWhile(d => d != directionCoordinate).Sum(d => 1);
 
         return (HexDirection)directionIndex;
+    }
+
+    public IEnumerable<AxialCoordinate> Neighbours
+    {
+        get
+        {
+            AxialCoordinate origin = this;
+            return Directions.Select(d => origin + d);
+        }
+    }
+
+    public IEnumerable<IGraphNode> Nodes { get { return Neighbours.Select(n => n as IGraphNode); } }
+
+    public int Distance(AxialCoordinate other)
+    {
+        int dX = Math.Abs(other.x - x);
+        int dY = Math.Abs(other.Y - Y);
+        int dZ = Math.Abs(other.z - z);
+
+        return Maths.Max(dX, dY, dZ);
     }
 
     /// <summary>

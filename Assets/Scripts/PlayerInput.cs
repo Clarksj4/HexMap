@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -10,6 +11,8 @@ public enum BuildState
 
 public class PlayerInput : MonoBehaviour
 {
+    public Quake quake;
+
     public Pipe PipePrefab;
     public Node NodePrefab;
     public Material correctPlacement;
@@ -51,6 +54,11 @@ public class PlayerInput : MonoBehaviour
     private void Awake()
     {
         SetState(BuildState.None);
+
+        //string lineJson = JsonUtility.ToJson(quakeLine);
+        //StreamWriter writer = new StreamWriter(Application.dataPath + "/line.json");
+        //writer.Write(lineJson);
+        //writer.Close();
     }
 
     private HexCell GetCellUnderCursor()
@@ -188,7 +196,9 @@ public class PlayerInput : MonoBehaviour
                 // Create node at current cell, exit build state
                 NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                 SetState(BuildState.None);
-                currentCell.Quake(1, 3);
+
+                quake.Do(currentCell.Coordinate);
+                //currentCell.Quake(1, 3, true);
             }
 
             else
