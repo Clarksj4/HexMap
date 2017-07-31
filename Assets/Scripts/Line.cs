@@ -6,13 +6,19 @@ using UnityEngine;
 [Serializable]
 public class Line : Shape
 {
+    /// <summary>
+    /// String representation of the type. Serialized so that type 
+    /// can be identified from json
+    /// </summary>
     [SerializeField][HideInInspector]
-    private string Type = "Line";
+    private string Type = typeof(Line).ToString();
 
     /// <summary>
-    /// The offset from the origin
+    /// How much to offset the shape's area of effect
     /// </summary>
-    public AxialCoordinate Offset;
+    public AxialCoordinate Offset { get { return offset; } }
+    [SerializeField]
+    private AxialCoordinate offset;
 
     /// <summary>
     /// The direction the line extends in
@@ -25,6 +31,15 @@ public class Line : Shape
     public int Range;
 
     /// <summary>
+    /// Returns each coordinates in this shape's area of effect. The shape originates
+    /// from the given origin translated by the shape's offset coordinate
+    /// </summary>
+    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin)
+    {
+        return From(origin + Offset, Direction, Range);
+    }
+
+    /// <summary>
     /// Returns each coordinates in this lines area of effect. The line originates
     /// from its offset coordinate
     /// </summary>
@@ -34,18 +49,7 @@ public class Line : Shape
     }
 
     /// <summary>
-    /// Returns each corrdainte in this line's area of effect. The line originates
-    /// from the given origin, offset by its offset coordinate
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <returns></returns>
-    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin)
-    {
-        return From(origin + Offset, Direction, Range);
-    }
-
-    /// <summary>
-    /// Gets each coordinate within the line's range
+    /// The collection of coordinates with the defined line's area.
     /// </summary>
     public static IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexDirection direction, int range)
     {

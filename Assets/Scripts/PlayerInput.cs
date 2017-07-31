@@ -197,7 +197,7 @@ public class PlayerInput : MonoBehaviour
                 NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                 SetState(BuildState.None);
 
-                quake.Do(currentCell.Coordinate);
+                quake.DoAt(currentCell.Coordinate);
                 //currentCell.Quake(1, 3, true);
             }
 
