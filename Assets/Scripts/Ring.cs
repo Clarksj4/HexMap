@@ -54,6 +54,8 @@ public class Ring : Shape
     /// </summary>
     public static IEnumerable<AxialCoordinate> From(AxialCoordinate origin, int minimum, int maximum)
     {
+        // TODO: Use a QuakeTraverser that says moving to a cell NOT on the map is not a traversable move
+        // make cost to move to each cell 1
         return Pathfind.Enumerate(origin, maximum)
                .Where(step => step.CostTo >= minimum)
                .Select(step => (AxialCoordinate)step.Node);

@@ -1,15 +1,14 @@
 ﻿using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Quake.asset", menuName = "Quake")]
 public class Quake : ScriptableObject
 {
-    public List<Shape> Shapes;
+    // TODO: figure out a way to serialize this, expose it in the inspector etc
+    public List<Shape> Shapes = new List<Shape>();
     public Line testLine;
     public Ring testRing;
-    public bool line;
 
     public float Intensity;
     public float Duration;
@@ -17,16 +16,15 @@ public class Quake : ScriptableObject
 
     public void DoAt(AxialCoordinate origin)
     {
-        if (line)
-            DoAt(testLine, origin);
-        else
-            DoAt(testRing, origin);
+        Shapes.Add(testRing);
+        Shapes.Add(testLine);
+
+        foreach (var shape in Shapes)
+            DoAt(shape, origin);
     }
 
     private void DoAt(Shape shape, AxialCoordinate origin)
     {
-        // nTiers = last coord distance to centre
-        // tier = coord distance to centre
         IEnumerable<AxialCoordinate> coords = shape.From(origin);
         int count = coords.Count();
         int firstTier = coords.First().Distance(origin + shape.Offset);
@@ -37,13 +35,14 @@ public class Quake : ScriptableObject
         foreach (var coord in coords)
         {
             HexCell cell = map[coord];
-            if (!cell)
-                break;
-            int tier = coord.Distance(origin + shape.Offset);
-            float t = (tier - firstTier) / (float)tiers;
-            float delay = (tier - firstTier) * PropogationDelay;
+            if (cell)
+            {
+                int tier = coord.Distance(origin + shape.Offset);
+                float t = (tier - firstTier) / (float)tiers;
+                float delay = (tier - firstTier) * PropogationDelay;
 
-            cell.Quake(Intensity * (1 - t), Duration - delay, delay);
+                cell.Quake(Intensity * (1 - t), Duration - delay, delay);
+            }
         }
     }
 }
