@@ -29,8 +29,8 @@ public class Area
         return false;
     }
 
-    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin)
+    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexRotation orientation)
     {
-        return Shapes.Select(kvp => kvp.Value).SelectMany(s => s.From(origin));
+        return Shapes.Select(kvp => kvp.Value).SelectMany(s => s.From(origin, orientation));
     }
 }

@@ -20,10 +20,7 @@ public class Line : Shape
     [SerializeField]
     private AxialCoordinate offset;
 
-    /// <summary>
-    /// The direction the line extends in
-    /// </summary>
-    public HexDirection Direction;
+    public HexRotation Rotation;
 
     /// <summary>
     /// How far the line extends. One = only the origin
@@ -34,9 +31,9 @@ public class Line : Shape
     /// Returns each coordinates in this shape's area of effect. The shape originates
     /// from the given origin translated by the shape's offset coordinate
     /// </summary>
-    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin)
+    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexRotation orientation)
     {
-        return From(origin + Offset, Direction, Range);
+        return From(origin + Offset, orientation + Rotation, Range);
     }
 
     /// <summary>
@@ -45,16 +42,16 @@ public class Line : Shape
     /// </summary>
     public IEnumerable<AxialCoordinate> FromOffset()
     {
-        return From(AxialCoordinate.Zero);
+        return From(AxialCoordinate.Zero, HexRotation.Identity);
     }
 
     /// <summary>
     /// The collection of coordinates with the defined line's area.
     /// </summary>
-    public static IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexDirection direction, int range)
+    public static IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexRotation orientation, int range)
     {
         // Scalable numeric direction
-        AxialCoordinate directionIncrement = direction.ToCoordinate();
+        AxialCoordinate directionIncrement = orientation.ToCoordinate();
 
         // Return each coordinate in the line's range
         for (int i = 0; i <= range; i++)

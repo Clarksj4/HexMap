@@ -11,7 +11,7 @@ public interface Shape
     /// Returns each coordinates in this shape's area of effect. The shape originates
     /// from the given origin translated by the shape's offset coordinate
     /// </summary>
-    IEnumerable<AxialCoordinate> From(AxialCoordinate origin);
+    IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexRotation orientation);
 
     /// <summary>
     /// Returns each coordinates in this shape's area of effect. The shape originates

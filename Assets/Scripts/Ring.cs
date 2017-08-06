@@ -37,14 +37,14 @@ public class Ring : Shape
     /// </summary>
     public IEnumerable<AxialCoordinate> FromOffset()
     {
-        return From(AxialCoordinate.Zero);
+        return From(AxialCoordinate.Zero, HexRotation.Identity);
     }
 
     /// <summary>
     /// Returns each coordinates in this shape's area of effect. The shape originates
     /// from the given origin translated by the shape's offset coordinate
     /// </summary>
-    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin)
+    public IEnumerable<AxialCoordinate> From(AxialCoordinate origin, HexRotation orientation)
     {
         return From(origin + Offset, Minimum, Maximum);
     }

@@ -16,7 +16,6 @@ public class HexCell : MonoBehaviour
     public bool HasPipe { get { return Pipe != null; } }
 
     private HexMap map;
-    private Coroutine quaking;
 
     public bool Add(Pipe pipe)
     {
@@ -67,12 +66,6 @@ public class HexCell : MonoBehaviour
         return Coordinate.IsAdjacent(other.Coordinate);
     }
 
-    public void Quake(float dY, float time, float delay = 0)
-    {
-        if (quaking == null)
-            quaking = StartCoroutine(DoQuake(dY, time, delay));
-    }
-
     private void Awake()
     {
         map = GetComponentInParent<HexMap>();
@@ -89,18 +82,9 @@ public class HexCell : MonoBehaviour
         Handles.Label(transform.position, Coordinate.ToString());
     }
 
-    IEnumerator DoQuake(float dY, float duration, float delay)
+    public void ResetPosition()
     {
-        // Wait for delay, then quake
-        yield return new WaitForSeconds(delay);
-        iTween.PunchPosition(gameObject, Vector3.down * dY, duration);
-        ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
-        var main = particleSystem.main;
-        main.gravityModifier = -dY / 4;
-        particleSystem.Play();
-
-        // Wait for quake's duration to expire, then null ref to quake
-        yield return new WaitForSeconds(duration);
-        quaking = null;
+        // Get position from map, move to position
+        transform.position = map.GetCellCentre(Coordinate);
     }
 }

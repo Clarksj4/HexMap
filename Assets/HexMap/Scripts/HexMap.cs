@@ -39,6 +39,14 @@ public class HexMap : MonoBehaviour
         CreateCells();
     }
 
+    public void ResetCells()
+    {
+        foreach (var cell in cells)
+        {
+            cell.ResetPosition();
+        }
+    }
+
     public bool Contains(AxialCoordinate coordinate)
     {
         return Contains(coordinate.GridColumn, coordinate.Z);

@@ -197,13 +197,12 @@ public class PlayerInput : MonoBehaviour
                 NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
                 SetState(BuildState.None);
 
-                quake.DoAt(currentCell.Coordinate);
-                //currentCell.Quake(1, 3, true);
+                quake.DoAt(currentCell.Coordinate, HexRotation.FromCoordinates(previousCell.Coordinate, currentCell.Coordinate));
             }
 
             else
             {
-                // PunchY the template node
+                // Shake the template node
                 // Play error sound
             }
         }

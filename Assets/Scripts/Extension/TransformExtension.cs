@@ -13,7 +13,7 @@ namespace UnityEngine
         public static void LookAt(this Transform transform, HexDirection direction)
         {
             // Set rotation
-            transform.rotation = direction.ToRotation();
+            transform.rotation = direction.ToQuaternion();
         }
     }
 }
