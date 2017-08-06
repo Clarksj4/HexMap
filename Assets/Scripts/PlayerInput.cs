@@ -19,6 +19,8 @@ public class PlayerInput : MonoBehaviour
     public Material incorrectPlacement;
     public AudioClip snapToSound;
     public AudioClip rotateSound;
+    public float NodeShakeScale = 0.5f;
+    public float NodeShakeDuration = 1f;
 
     private HexCell currentCell;
     private HexCell previousCell;
@@ -203,6 +205,8 @@ public class PlayerInput : MonoBehaviour
             else
             {
                 // Shake the template node
+                iTween.ShakePosition(templateNode.gameObject, HexMetrics.ORIENTATION * NodeShakeScale, NodeShakeDuration);
+                
                 // Play error sound
             }
         }
