@@ -42,7 +42,6 @@ public class Node : MonoBehaviour
         }
     }
 
-
     [SerializeField]
     private AxialCoordinate coordinate;
     [SerializeField]

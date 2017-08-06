@@ -57,7 +57,7 @@ public class Line : Shape
         AxialCoordinate directionIncrement = direction.ToCoordinate();
 
         // Return each coordinate in the line's range
-        for (int i = 0; i < range; i++)
+        for (int i = 0; i <= range; i++)
             yield return origin + (directionIncrement * i);
     }
 }

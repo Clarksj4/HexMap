@@ -5,10 +5,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Quake.asset", menuName = "Quake")]
 public class Quake : ScriptableObject
 {
-    // TODO: figure out a way to serialize this, expose it in the inspector etc
-    public List<Shape> Shapes = new List<Shape>();
-    public Line testLine;
-    public Ring testRing;
+    //
+    // TODO: serialize / deserialize to area. This stuff is here as a hacky way to serialize shapes
+    //
+    public Line[] Lines;
+    public int[] LineIndices;
+
+    public Ring[] Rings;
+    public int[] RingIndices;
+
+    // TODO: serialize / deserialize this
+    private Area area = new Area();
 
     public float Intensity;
     public float Duration;
@@ -16,20 +23,10 @@ public class Quake : ScriptableObject
 
     public void DoAt(AxialCoordinate origin)
     {
-        Shapes.Add(testRing);
-        Shapes.Add(testLine);
+        ConstructArea();
 
-        foreach (var shape in Shapes)
-            DoAt(shape, origin);
-    }
-
-    private void DoAt(Shape shape, AxialCoordinate origin)
-    {
-        IEnumerable<AxialCoordinate> coords = shape.From(origin);
-        int count = coords.Count();
-        int firstTier = coords.First().Distance(origin + shape.Offset);
-        int lastTier = coords.Last().Distance(origin + shape.Offset);
-        int tiers = lastTier - firstTier;
+        IEnumerable<AxialCoordinate> coords = area.From(origin).OrderBy(c => c.Distance(origin));
+        int tiers = coords.Last().Distance(origin) + 1;
 
         HexMap map = FindObjectOfType<HexMap>();
         foreach (var coord in coords)
@@ -37,12 +34,21 @@ public class Quake : ScriptableObject
             HexCell cell = map[coord];
             if (cell)
             {
-                int tier = coord.Distance(origin + shape.Offset);
-                float t = (tier - firstTier) / (float)tiers;
-                float delay = (tier - firstTier) * PropogationDelay;
+                int tier = coord.Distance(origin);
+                float t = tier / (float)tiers;
+                float delay = tier * PropogationDelay;
 
                 cell.Quake(Intensity * (1 - t), Duration - delay, delay);
             }
         }
+    }
+
+    private void ConstructArea()
+    {
+        for (int i = 0; i < Lines.Length; i++)
+            area.Add(LineIndices[i], Lines[i]);
+
+        for (int i = 0; i < Rings.Length; i++)
+            area.Add(RingIndices[i], Rings[i]);
     }
 }
