@@ -94,6 +94,10 @@ public class HexCell : MonoBehaviour
         // Wait for delay, then quake
         yield return new WaitForSeconds(delay);
         iTween.PunchPosition(gameObject, Vector3.down * dY, duration);
+        ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
+        var main = particleSystem.main;
+        main.gravityModifier = -dY / 4;
+        particleSystem.Play();
 
         // Wait for quake's duration to expire, then null ref to quake
         yield return new WaitForSeconds(duration);
