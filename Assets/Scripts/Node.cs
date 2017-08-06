@@ -42,6 +42,8 @@ public class Node : MonoBehaviour
         }
     }
 
+    public Area Output { get { return output; } }
+
     [SerializeField]
     private AxialCoordinate coordinate;
     [SerializeField]
@@ -50,6 +52,8 @@ public class Node : MonoBehaviour
     private HexCell cell;
     [SerializeField][HideInInspector]
     private HexMap map;
+    [SerializeField]
+    private Area output;
 
     private void Awake()
     {
