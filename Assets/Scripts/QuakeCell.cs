@@ -51,6 +51,7 @@ public class QuakeCell : MonoBehaviour, IEffect
         ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>();
         var main = particleSystem.main;
         main.gravityModifier = -dY / 4;
+        main.startLifetime = duration;
         particleSystem.Play();
 
         // Wait for quake's duration to expire, then null ref to quake

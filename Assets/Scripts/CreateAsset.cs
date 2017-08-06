@@ -11,8 +11,8 @@ public class CreateAsset : MonoBehaviour
 
     private void Start()
     {
-        Mesh hex = MeshCreate.HexPlane(Vector3.zero, direction, side);
-        AssetDatabase.CreateAsset(hex, "Assets/Hex.asset");
+        Mesh hex = MeshCreate.HexColumn(Vector3.zero, height, direction, side);
+        AssetDatabase.CreateAsset(hex, "Assets/HexColumnSingle.asset");
         AssetDatabase.SaveAssets();
     }
 }

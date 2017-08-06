@@ -31,7 +31,7 @@ public static class MeshCreate
         hexColumn.name = "HexColumn";
 
         // Submeshes are not combined, so top, bottom, and sides can all use different materials
-        hexColumn.CombineMeshes(combine, false, false, false);
+        hexColumn.CombineMeshes(combine, true, false, false);
 
         return hexColumn;
     }
