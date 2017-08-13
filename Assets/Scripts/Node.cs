@@ -35,15 +35,16 @@ public class Node : MonoBehaviour
         get { return direction; }
         set
         {
-            direction = value;
-
             // Set rotation
+            direction = value;
             transform.LookAt(direction);
         }
     }
 
     public Area Output { get { return output; } }
 
+    public Player player;
+    public float outputAmount = 0.1f;
     [SerializeField]
     private AxialCoordinate coordinate;
     [SerializeField]
@@ -55,15 +56,54 @@ public class Node : MonoBehaviour
     [SerializeField]
     private Area output;
 
+    private Coroutine outputting;
+
     private void Awake()
     {
         map = GetComponentInParent<HexMap>();
+        player = FindObjectOfType<Player>();
     }
 
     public bool IsValidPlacement(HexCell cell)
     {
         return cell != null &&
                !cell.HasNode;
+    }
+
+    public void BeginOutput()
+    {
+        if (outputting == null)
+            StartCoroutine(DoOutput());
+    }
+
+    public void StopOutputting()
+    {
+        StopCoroutine(outputting);
+        outputting = null;
+    }
+
+    IEnumerator DoOutput()
+    {
+        while (true)
+        {
+            IEnumerable<AxialCoordinate> coords = output.From(Coordinate, HexRotation.FromDirection(Direction));
+            int tiers = coords.Last().Distance(Coordinate) + 1;
+
+            foreach (var coordinate in coords)
+            {
+                HexCell cell = map[coordinate];
+
+                if (cell)
+                {
+                    float tier = coordinate.Distance(Coordinate);
+                    float t = 1 - (tier / tiers);
+
+                    cell.IncrementControl(player, outputAmount * t);
+                }
+            }
+
+            yield return new WaitForSeconds(1);
+        }
     }
 
     //
@@ -115,6 +155,10 @@ public class Node : MonoBehaviour
 
             // Give the cell a ref to the new node
             Cell.Add(newNode);
+            newNode.map = newNode.GetComponentInParent<HexMap>();
+
+            cell.RemoveControl();
+            cell.SetControl(FindObjectOfType<Player>(), 1);
 
             return newNode;
         }

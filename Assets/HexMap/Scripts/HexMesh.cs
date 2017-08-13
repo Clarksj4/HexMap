@@ -16,18 +16,26 @@ public class HexMesh : MonoBehaviour
     /// First 7 verts in mesh are the top face of the hex column (includes central vert)
     /// </summary>
     public IEnumerable<Vector3> TopFaceVerts { get { return Mesh.vertices.Take(7); } }
+    public Renderer Renderer { get; private set; }
     public Mesh Mesh { get { return meshFilter.mesh; } }
     public Mesh SharedMesh { get { return meshFilter.sharedMesh; } }
 
     private MeshFilter meshFilter;
+    private new Renderer renderer;
 
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
+        renderer = GetComponent<Renderer>();
     }
 
     public void Create()
     {
         meshFilter.mesh = MeshCreate.HexColumn(Vector3.zero, Height, Vector3.up, OuterRadius);
+    }
+
+    public void SetTopColour(Color colour)
+    {
+        renderer.materials[0].color = colour;
     }
 }

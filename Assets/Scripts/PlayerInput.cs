@@ -196,7 +196,8 @@ public class PlayerInput : MonoBehaviour
             if (validPlacement)
             {
                 // Create node at current cell, exit build state
-                NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
+                Node newNode = NodePrefab.At(currentCell).Towards(templateNode.Direction).Create();
+                newNode.BeginOutput();
                 SetState(BuildState.None);
 
                 quake.DoAt(currentCell.Coordinate, HexRotation.FromCoordinates(previousCell.Coordinate, currentCell.Coordinate));

@@ -15,7 +15,48 @@ public class HexCell : MonoBehaviour
     public bool HasNode { get { return Node != null; } }
     public bool HasPipe { get { return Pipe != null; } }
 
+    private Dictionary<Player, float> playerControl = new Dictionary<Player, float>();
     private HexMap map;
+
+    public void SetControl(Player player, float control)
+    {
+        if (!playerControl.ContainsKey(player))
+            playerControl.Add(player, 0);
+
+        // Set player's control on this cell
+        playerControl[player] = Mathf.Min(control, 1.0f); ;
+
+        // Apply updated colour to cell
+        Recolour();
+    }
+
+    public void IncrementControl(Player player, float increment)
+    {
+        if (!playerControl.ContainsKey(player))
+            playerControl.Add(player, 0);
+
+        // Increment player's control on this cell
+        float control = playerControl[player];
+        control = Mathf.Min(control + increment, 1.0f);
+        playerControl[player] = control;
+
+        // Apply updated colour to cell
+        Recolour();
+    }
+
+    public void RemoveControl()
+    {
+        playerControl = new Dictionary<Player, float>();
+
+        Recolour();
+    }
+
+    public void Recolour()
+    {
+        Color cellColour = playerControl.Select(kvp => kvp.Key.colour * kvp.Value).Aggregate(Color.black, (total, c) => total + c);
+        cellColour /= playerControl.Count;
+        HexMesh.SetTopColour(cellColour);
+    }
 
     public bool Add(Pipe pipe)
     {

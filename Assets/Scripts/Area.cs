@@ -47,6 +47,8 @@ public class Area
 
     private void ConstructArea()
     {
+        Shapes = new List<KeyValuePair<int, Shape>>();
+
         for (int i = 0; i < Lines.Length; i++)
             Add(LineIndices[i], Lines[i]);
 

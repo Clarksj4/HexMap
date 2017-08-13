@@ -10,8 +10,8 @@ public class Line : Shape
     /// String representation of the type. Serialized so that type 
     /// can be identified from json
     /// </summary>
-    [SerializeField][HideInInspector]
-    private string Type = typeof(Line).ToString();
+    [HideInInspector]
+    public string Type = typeof(Line).ToString();
 
     /// <summary>
     /// How much to offset the shape's area of effect

@@ -11,8 +11,8 @@ public class Ring : Shape
     /// String representation of the type. Serialized so that type 
     /// can be identified from json
     /// </summary>
-    [SerializeField][HideInInspector]
-    private string Type = "Ring";
+    [HideInInspector]
+    public string Type = typeof(Ring).ToString();
 
     /// <summary>
     /// The offset from the origin
