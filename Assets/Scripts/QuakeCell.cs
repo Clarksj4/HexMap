@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuakeCell : MonoBehaviour, IEffect
+public class QuakeCell : MonoBehaviour
 {
     private Coroutine quaking;
     private HexCell cell;
