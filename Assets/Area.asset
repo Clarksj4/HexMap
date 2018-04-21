@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f5f110c64130044d91d8c8d278413f0, type: 3}
+  m_Name: Area
+  m_EditorClassIdentifier: 
+  Shapes:
+  - {fileID: 114769441829939588}
+  - {fileID: 114968014686655602}
+  - {fileID: 114632931394005954}
+  - {fileID: 114003273900655108}
+--- !u!114 &114003273900655108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09b41e5e4c895747b798c5e40d7ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Offset:
+    x: 0
+    z: 0
+  Rotation:
+    degrees: 0
+    ordinal: 0
+  Range: 2
+--- !u!114 &114632931394005954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09b41e5e4c895747b798c5e40d7ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Offset:
+    x: 0
+    z: 0
+  Rotation:
+    degrees: 0
+    ordinal: 0
+  Range: 0
+--- !u!114 &114769441829939588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09b41e5e4c895747b798c5e40d7ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Offset:
+    x: 0
+    z: 0
+  Rotation:
+    degrees: 0
+    ordinal: 0
+  Range: 0
+--- !u!114 &114968014686655602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09b41e5e4c895747b798c5e40d7ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Offset:
+    x: 0
+    z: 0
+  Rotation:
+    degrees: 0
+    ordinal: 0
+  Range: 0
